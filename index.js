@@ -236,7 +236,9 @@ app.get('/', (req, res) => {
   res.send('¡El servidor de Baltazar Barragán está vivo! 🚀')
 })
 
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en puerto ${PORT}`)
   console.log('==============================================')
   console.log('  Servidor Baltazar Barragán corriendo')
   console.log('  http://localhost:3000')
