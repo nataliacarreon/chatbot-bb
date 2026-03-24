@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Baltazar Barragán — Asistente Virtual</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #f5f0eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .chat-wrapper {
+      width: 420px;
+      height: 700px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* HEADER */
+    .chat-header {
+      background: #1a1a1a;
+      color: #fff;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .chat-header .avatar {
+      width: 42px;
+      height: 42px;
+      background: #c9a96e;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #1a1a1a;
+      flex-shrink: 0;
+    }
+    .chat-header .info .name {
+      font-size: 15px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    .chat-header .info .status {
+      font-size: 12px;
+      color: #c9a96e;
+      font-family: sans-serif;
+      margin-top: 2px;
+    }
+
+    /* MENSAJES */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #faf7f4;
+    }
+
+    .msg {
+      display: flex;
+      flex-direction: column;
+      max-width: 80%;
+    }
+    .msg.user { align-self: flex-end; align-items: flex-end; }
+    .msg.bot  { align-self: flex-start; align-items: flex-start; }
+
+    .msg .bubble {
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+      font-family: sans-serif;
+    }
+    .msg.user .bubble {
+      background: #1a1a1a;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .msg.bot .bubble {
+      background: #fff;
+      color: #1a1a1a;
+      border: 1px solid #e8e0d8;
+      border-bottom-left-radius: 4px;
+    }
+    .msg .time {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 4px;
+      font-family: sans-serif;
+    }
+
+    /* TYPING INDICATOR */
+    .typing .bubble {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 12px 16px;
+    }
+    .typing .dot {
+      width: 7px; height: 7px;
+      background: #c9a96e;
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+    .typing .dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
+    }
+
+    /* INPUT */
+    .chat-input {
+      padding: 14px 16px;
+      border-top: 1px solid #ede8e3;
+      background: #fff;
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    .chat-input textarea {
+      flex: 1;
+      border: 1px solid #ddd;
+      border-radius: 22px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-family: sans-serif;
+      resize: none;
+      outline: none;
+      max-height: 100px;
+      line-height: 1.4;
+      color: #1a1a1a;
+    }
+    .chat-input textarea:focus { border-color: #c9a96e; }
+    .chat-input button {
+      width: 42px;
+      height: 42px;
+      background: #1a1a1a;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .chat-input button:hover { background: #c9a96e; }
+    .chat-input button svg { width: 18px; height: 18px; fill: #fff; }
+
+    /* BOTON REINICIAR */
+    .btn-reset {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: auto;
+      color: #c9a96e;
+      font-size: 12px;
+      font-family: sans-serif;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .btn-reset:hover { background: rgba(201,169,110,0.15); }
+  </style>
+</head>
+<body>
+
+<div class="chat-wrapper">
+
+  <!-- HEADER -->
+  <div class="chat-header">
+    <div class="avatar">BB</div>
+    <div class="info">
+      <div class="name">Baltazar Barragán</div>
+      <div class="status">Asistente virtual · En línea</div>
+    </div>
+    <button class="btn-reset" onclick="reiniciarChat()" title="Reiniciar conversación">↺ Reiniciar</button>
+  </div>
+
+  <!-- MENSAJES -->
+  <div class="chat-messages" id="messages"></div>
+
+  <!-- INPUT -->
+  <div class="chat-input">
+    <textarea
+      id="input"
+      placeholder="Escribe tu mensaje..."
+      rows="1"
+      onkeydown="handleKey(event)"
+      oninput="autoResize(this)"
+    ></textarea>
+    <button onclick="enviarMensaje()">
+      <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+    </button>
+  </div>
+
+</div>
+
+<script>
+  // Número de teléfono simulado (para el historial del servidor)
+  const TELEFONO = 'web-' + Math.random().toString(36).substr(2, 6)
+
+  const messagesEl = document.getElementById('messages')
+  const inputEl    = document.getElementById('input')
+
+  // Mensaje de bienvenida
+  window.onload = () => {
+    agregarMensaje('bot', 'Gracias por tu interés en Baltazar Barragán. ¿Tienes alguna idea en mente o pregunta?')
+  }
+
+  function agregarMensaje(tipo, texto) {
+    const ahora = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
+    const div = document.createElement('div')
+    div.className = `msg ${tipo}`
+    div.innerHTML = `
+      <div class="bubble">${texto.replace(/\n/g, '<br>')}</div>
+      <span class="time">${ahora}</span>
+    `
+    messagesEl.appendChild(div)
+    messagesEl.scrollTop = messagesEl.scrollHeight
+    return div
+  }
+
+  function mostrarTyping() {
+    const div = document.createElement('div')
+    div.className = 'msg bot typing'
+    div.id = 'typing'
+    div.innerHTML = `<div class="bubble"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`
+    messagesEl.appendChild(div)
+    messagesEl.scrollTop = messagesEl.scrollHeight
+  }
+
+  function quitarTyping() {
+    const t = document.getElementById('typing')
+    if (t) t.remove()
+  }
+
+  async function enviarMensaje() {
+    const texto = inputEl.value.trim()
+    if (!texto) return
+
+    agregarMensaje('user', texto)
+    inputEl.value = ''
+    inputEl.style.height = 'auto'
+    mostrarTyping()
+
+    try {
+      const res = await fetch('/mensaje', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ telefono: TELEFONO, mensaje: texto })
+      })
+      const data = await res.json()
+      quitarTyping()
+      agregarMensaje('bot', data.respuesta || 'Hubo un error al obtener la respuesta.')
+    } catch (err) {
+      quitarTyping()
+      agregarMensaje('bot', 'No pude conectarme al servidor. ¿Está corriendo node index.js?')
+    }
+  }
+
+  async function reiniciarChat() {
+    await fetch(`/historial/${TELEFONO}`, { method: 'DELETE' })
+    messagesEl.innerHTML = ''
+    agregarMensaje('bot', 'Conversación reiniciada. ¿En qué puedo ayudarte?')
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      enviarMensaje()
+    }
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto'
+    el.style.height = Math.min(el.scrollHeight, 100) + 'px'
+  }
+</script>
+
+</body>
+</html>
