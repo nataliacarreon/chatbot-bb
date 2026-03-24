@@ -51,7 +51,7 @@ PROCESO DE COMPRA (4 etapas)
    Se selecciona el tejido y se definen todos los detalles: solapa, botones, forros, iniciales bordadas.
 2. Segunda cita (30 min): Primera prueba — se evalúan proporciones, caída y estructura (prueba en blanco).
 3. Tercera cita (30 min): Segunda prueba — se afinan milímetros hasta lograr resultado impecable.
-4. Entrega final: Las prendas se confeccionan artesanalmente en 4 a 6 semanas.
+4. Entrega final: Las prendas se confeccionan artesanalmente en 4 a 6 semanas a partir de tu primer cita.
 
 CASAS TEXTILERAS PARA TRAJE
 - Loro Piana (Italia): lana merino extrafina, vicuña y cashmere. Suavidad y elegancia supremas.
