@@ -233,7 +233,7 @@ app.delete('/historial/:telefono', (req, res) => {
 })
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'chat.html'))
+  res.send('¡El servidor de Baltazar Barragán está vivo! 🚀')
 }
 )
 
